@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<h1>Dashboard</h1>
+
+<nav>
+    <a href="/">Students</a> |
+    <a href="/courses">Courses</a> |
+    <a href="/logout">Logout</a>
+</nav>
+
+<canvas id="myChart" width="400" height="200"></canvas>
+
+<div class="dashboard-container">
+    <div class="card">
+        <h3>Total Students</h3>
+        <h2>{{ students }}</h2>
+    </div>
+
+    <div class="card">
+        <h3>Total Courses</h3>
+        <h2>{{ courses }}</h2>
+    </div>
+</div>
+
+<!-- ✅ SCRIPT MOVED HERE -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const data = JSON.parse(document.getElementById("data").textContent);
+
+    let students = data.students;
+    let courses = data.courses;
+
+    let ctx = document.getElementById('myChart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Departments', 'Courses'],
+            datasets: [{
+                label: 'Count',
+                data: [departments, courses],
+                backgroundColor: ['#4CAF50', '#2196F3']
+            }]
+        }
+    });
+
+});
+</script>
+
+</body>
+</html>

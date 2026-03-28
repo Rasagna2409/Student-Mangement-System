@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Courses</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<h1>Courses</h1>
+
+<nav>
+    <a href="/">Students</a> |
+    <a href="/dashboard">Dashboard</a> |
+    <a href="/logout">Logout</a>
+</nav>
+
+<form action="/add_course" method="post">
+    <input name="name" placeholder="Course Name" required>
+    <input name="credits" placeholder="Credits" required>
+    <button>Add Course</button>
+</form>
+
+<table>
+<tr>
+    <th>ID</th>
+    <th>Course Name</th>
+    <th>Credits</th>
+</tr>
+
+{% for c in courses %}
+<tr>
+    <td>{{c[0]}}</td>
+    <td>{{c[1]}}</td>
+    <td>{{c[2]}}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+</body>
+</html>
