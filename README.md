@@ -3,6 +3,8 @@
 A simple yet professional **Student Management System web application** built using **Flask, SQLite, HTML, CSS, and Chart.js**.
 It allows you to manage students and courses with a clean dashboard and visual analytics.
 
+live demo :https://student-mangement-system-l2gw.onrender.com
+
 # 🚀 Features
 
 * ➕ Add new students
