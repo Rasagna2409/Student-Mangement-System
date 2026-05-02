@@ -6,31 +6,48 @@
 </head>
 <body>
 
-<h1>Student Report</h1>
+<h1>📊 Student Report</h1>
 
 <nav>
     <a href="/">Students</a> |
-    <a href="/dashboard">Dashboard</a>
+    <a href="/courses">Courses</a> |
+    <a href="/dashboard">Dashboard</a> |
+    <a href="/logout">Logout</a>
 </nav>
 
-<table>
-<tr>
-    <th>Name</th>
-    <th>Course</th>
-    <th>Marks</th>
-    <th>Grade</th>
-</tr>
+<div class="container">
 
-{% for row in data %}
-<tr>
-    <td>{{row[0]}}</td>
-    <td>{{row[1]}}</td>
-    <td>{{row[2]}}</td>
-    <td>{{row[3]}}</td>
-</tr>
-{% endfor %}
+    <h2>Marks & Performance</h2>
 
-</table>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Course</th>
+            <th>Marks</th>
+            <th>Grade</th>
+        </tr>
+
+        {% if data %}
+            {% for row in data %}
+            <tr>
+                <td>{{ row["name"] }}</td>
+                <td>{{ row["course_name"] }}</td>
+                <td>{{ row["marks"] }}</td>
+                <td>
+                    <span class="grade {{ row['grade'] }}">
+                        {{ row["grade"] }}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="4">No data available</td>
+            </tr>
+        {% endif %}
+    </table>
+
+</div>
 
 </body>
 </html>

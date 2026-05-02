@@ -8,18 +8,42 @@
 
 <div class="login-container">
 
-    <h2>Login</h2>
+    <h2>🔐 Login</h2>
+
+    <!-- 🔹 ERROR MESSAGE -->
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
 
     <form method="post">
+
         <input name="username" placeholder="Username" required>
-        <input name="password" type="password" placeholder="Password" required>
-        <button>Login</button>
+
+        <input id="password" name="password" type="password" placeholder="Password" required>
+
+        <!-- 🔹 SHOW PASSWORD -->
+        <label style="font-size: 14px;">
+            <input type="checkbox" onclick="togglePassword()"> Show Password
+        </label>
+
+        <br>
+
+        <button type="submit">Login</button>
+
     </form>
 
-    <p>Don't have an account?</p>
-    <a href="/register">Register</a>
+    <p class="switch-text">Don't have an account?</p>
+    <a class="link-btn" href="/register">Register</a>
 
 </div>
+
+<!-- 🔹 SCRIPT -->
+<script>
+function togglePassword() {
+    const pwd = document.getElementById("password");
+    pwd.type = pwd.type === "password" ? "text" : "password";
+}
+</script>
 
 </body>
 </html>

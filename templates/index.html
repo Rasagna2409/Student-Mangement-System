@@ -16,52 +16,56 @@
     <a href="/logout">Logout</a>
 </nav>
 
+<!-- 🔹 SEARCH -->
 <form action="/search" method="get">
     <input name="q" placeholder="Search student by name">
-    <button>Search</button>
+    <button type="submit">Search</button>
 </form>
 
+<!-- 🔹 ADD STUDENT -->
 <form action="/add" method="post">
     <input name="name" placeholder="Name" required>
     <input name="email" placeholder="Email">
     <input name="phone" placeholder="Phone">
     <input name="dept" placeholder="Department">
-    <button>Add Student</button>
+    <button type="submit">Add Student</button>
 </form>
 
 <h2>Student List</h2>
 
+<!-- 🔹 STUDENT TABLE -->
 <table>
 <tr>
     <th>ID</th>
     <th>Name</th>
     <th>Email</th>
     <th>Phone</th>
-    <th>Dept</th>
+    <th>Department</th>
     <th>Actions</th>
 </tr>
 
 {% for s in students %}
 <tr>
-    <form action="/update/{{s[0]}}" method="post">
-        <td>{{s[0]}}</td>
-        <td><input name="name" value="{{s[1]}}"></td>
-        <td><input name="email" value="{{s[2]}}"></td>
-        <td><input name="phone" value="{{s[3]}}"></td>
-        <td><input name="dept" value="{{s[4]}}"></td>
+    <form action="/update/{{ s[0] }}" method="post">
+        <td>{{ s[0] }}</td>
+        <td><input name="name" value="{{ s[1] }}"></td>
+        <td><input name="email" value="{{ s[2] }}"></td>
+        <td><input name="phone" value="{{ s[3] }}"></td>
+        <td><input name="dept" value="{{ s[4] }}"></td>
         <td>
             <button type="submit">Update</button>
-            <a href="/delete/{{s[0]}}" onclick="return confirm('Are you sure?')">Delete</a>
+            <a href="/delete/{{ s[0] }}" onclick="return confirm('Are you sure?')">Delete</a>
         </td>
     </form>
 </tr>
 {% endfor %}
 
-{% if error %}
-<p style="color:red;">{{error}}</p>
-{% endif %}
-
 </table>
+
+<!-- 🔹 ERROR MESSAGE -->
+{% if error %}
+<p style="color:red;">{{ error }}</p>
+{% endif %}
 
 </body>
 </html>

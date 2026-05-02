@@ -4,10 +4,15 @@ import sqlite3
 app = Flask(__name__)
 app.secret_key = "secret123"
 
-def get_db():
-    return sqlite3.connect("database.db")
 
-# ✅ INIT DATABASE
+# 🔹 DB CONNECTION
+def get_db():
+    conn = sqlite3.connect("database.db")
+    conn.row_factory = sqlite3.Row   # ✅ allows student["name"]
+    return conn
+
+
+# 🔹 INIT DATABASE
 def init_db():
     conn = get_db()
 
@@ -57,13 +62,16 @@ def init_db():
     conn.commit()
     conn.close()
 
+
 init_db()
+
 
 # 🔐 LOGIN CHECK
 def is_logged_in():
     return "user" in session
 
-# HOME
+
+# 🔹 HOME (STUDENTS)
 @app.route("/")
 def index():
     if not is_logged_in():
@@ -75,7 +83,26 @@ def index():
 
     return render_template("index.html", students=students)
 
-# ADD STUDENT
+
+# 🔹 SEARCH
+@app.route("/search")
+def search():
+    if not is_logged_in():
+        return redirect("/login")
+
+    q = request.args.get("q")
+
+    conn = get_db()
+    students = conn.execute(
+        "SELECT * FROM Student WHERE name LIKE ?",
+        ('%' + q + '%',)
+    ).fetchall()
+    conn.close()
+
+    return render_template("index.html", students=students)
+
+
+# 🔹 ADD STUDENT
 @app.route("/add", methods=["POST"])
 def add():
     if not is_logged_in():
@@ -95,7 +122,8 @@ def add():
     conn.close()
     return redirect("/")
 
-# DELETE
+
+# 🔹 DELETE
 @app.route("/delete/<int:id>")
 def delete(id):
     if not is_logged_in():
@@ -107,7 +135,8 @@ def delete(id):
     conn.close()
     return redirect("/")
 
-# UPDATE
+
+# 🔹 UPDATE
 @app.route("/update/<int:id>", methods=["POST"])
 def update(id):
     if not is_logged_in():
@@ -129,7 +158,8 @@ def update(id):
     conn.close()
     return redirect("/")
 
-# COURSES
+
+# 🔹 COURSES PAGE
 @app.route("/courses")
 def courses():
     if not is_logged_in():
@@ -141,7 +171,8 @@ def courses():
 
     return render_template("courses.html", courses=courses)
 
-# ADD COURSE
+
+# 🔹 ADD COURSE
 @app.route("/add_course", methods=["POST"])
 def add_course():
     if not is_logged_in():
@@ -156,9 +187,12 @@ def add_course():
     conn.close()
     return redirect("/courses")
 
-# LOGIN
+
+# 🔹 LOGIN
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    error = None
+
     if request.method == "POST":
         conn = get_db()
         user = conn.execute(
@@ -168,31 +202,40 @@ def login():
         conn.close()
 
         if user:
-            session["user"] = user[1]
+            session["user"] = user["username"]
             return redirect("/")
         else:
-            return "Invalid credentials"
+            error = "Invalid credentials"
 
-    return render_template("login.html", error="Invalid credentials")
+    return render_template("login.html", error=error)
 
-# REGISTER
+# register
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    error = None
+
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        confirm = request.form["confirm_password"]
+
+        # 🔹 CHECK PASSWORD MATCH
+        if password != confirm:
+            return render_template("register.html", error="Passwords do not match")
 
         conn = get_db()
 
-        # ✅ check if user exists
+        # 🔹 CHECK IF USER EXISTS
         existing = conn.execute(
             "SELECT * FROM Users WHERE username=?",
             (username,)
         ).fetchone()
 
         if existing:
+            conn.close()
             return render_template("register.html", error="Username already exists")
 
+        # 🔹 INSERT USER
         conn.execute(
             "INSERT INTO Users(username,password) VALUES (?,?)",
             (username, password)
@@ -202,15 +245,17 @@ def register():
 
         return redirect("/login")
 
-    return render_template("register.html")
+    return render_template("register.html", error=error)
 
-# LOGOUT
+
+# 🔹 LOGOUT
 @app.route("/logout")
 def logout():
     session.pop("user", None)
     return redirect("/login")
 
-# DASHBOARD
+
+# 🔹 DASHBOARD
 @app.route("/dashboard")
 def dashboard():
     if not is_logged_in():
@@ -221,25 +266,14 @@ def dashboard():
     total_courses = conn.execute("SELECT COUNT(*) FROM Course").fetchone()[0]
     conn.close()
 
-    return render_template("dashboard.html",
-                           students=total_students,
-                           courses=total_courses)                          
-                           
-# ENROLL
-@app.route("/enroll", methods=["POST"])
-def enroll():
-    if not is_logged_in():
-        return redirect("/login")
-
-    conn = get_db()
-    conn.execute(
-        "INSERT INTO Enrollment VALUES (?,?)",
-        (request.form["student_id"], request.form["course_id"])
+    return render_template(
+        "dashboard.html",
+        students=total_students,
+        courses=total_courses
     )
-    conn.commit()
-    conn.close()
-    return redirect("/")
 
+
+# 🔹 REPORT PAGE (FIXED)
 @app.route("/report")
 def report():
     if not is_logged_in():
@@ -256,11 +290,9 @@ def report():
 
     conn.close()
 
-    return render_template(
-    "dashboard.html",
-    students=10,
-    courses=5
-)
+    return render_template("report.html", data=data)
 
+
+# 🔹 RUN
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()

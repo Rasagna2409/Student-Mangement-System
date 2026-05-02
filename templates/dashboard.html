@@ -16,9 +16,9 @@
     <a href="/logout">Logout</a>
 </nav>
 
-<canvas id="myChart" width="400" height="200"></canvas>
-
+<!-- 🔹 DASHBOARD CARDS -->
 <div class="dashboard-container">
+
     <div class="card">
         <h3>Total Students</h3>
         <h2>{{ students }}</h2>
@@ -28,13 +28,25 @@
         <h3>Total Courses</h3>
         <h2>{{ courses }}</h2>
     </div>
+
 </div>
 
-<!-- ✅ SCRIPT MOVED HERE -->
+<!-- 🔹 CHART -->
+<canvas id="myChart"></canvas>
+
+<!-- 🔹 PASS DATA TO JS -->
+<script id="chart-data" type="application/json">
+{
+    "students": {{ students }},
+    "courses": {{ courses }}
+}
+</script>
+
+<!-- 🔹 CHART SCRIPT -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-    const data = JSON.parse(document.getElementById("data").textContent);
+    const data = JSON.parse(document.getElementById("chart-data").textContent);
 
     let students = data.students;
     let courses = data.courses;
@@ -44,12 +56,15 @@ document.addEventListener("DOMContentLoaded", function () {
     new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Departments', 'Courses'],
+            labels: ['Students', 'Courses'],
             datasets: [{
                 label: 'Count',
-                data: [departments, courses],
-                backgroundColor: ['#4CAF50', '#2196F3']
+                data: [students, courses],
+                backgroundColor: ['#3b82f6', '#10b981']
             }]
+        },
+        options: {
+            responsive: true
         }
     });
 

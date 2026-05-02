@@ -8,20 +8,27 @@
 
 <div class="login-container">
 
-    <h2>Create Account</h2>
+    <h2>🚀 Create Account</h2>
 
     {% if error %}
-    <p style="color:red;">{{error}}</p>
+        <p class="error">{{ error }}</p>
     {% endif %}
 
     <form method="post">
+
         <input name="username" placeholder="Username" required>
+
         <input name="password" type="password" placeholder="Password" required>
-        <button>Register</button>
+
+        <!-- 🔹 Confirm Password -->
+        <input name="confirm_password" type="password" placeholder="Confirm Password" required>
+
+        <button type="submit">Register</button>
+
     </form>
 
-    <p>Already have an account?</p>
-    <a href="/login">Login</a>
+    <p class="switch-text">Already have an account?</p>
+    <a class="link-btn" href="/login">Login</a>
 
 </div>
 
